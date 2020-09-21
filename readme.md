@@ -1,5 +1,7 @@
 # WHABO
 
+![Structure](./images/structure.svg)
+
 ## Install
 
 ### Dependence
