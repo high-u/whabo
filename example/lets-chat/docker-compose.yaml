@@ -1,0 +1,17 @@
+version: "3.5"
+services:
+  lets-chat:
+    image: sdelements/lets-chat:latest
+    # ports:
+    #   - 80:8080
+    networks:
+      - lets-chat-net
+      - reverse-proxy-net
+  mongo:
+    image: mongo:latest
+    networks:
+      - lets-chat-net
+networks:
+  lets-chat-net:
+  reverse-proxy-net:
+    external: true

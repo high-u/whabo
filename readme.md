@@ -228,3 +228,17 @@ docker-compose -c whabo exec routing-table redis-cli set wordpress "wordpress:80
 docker-compose -c whabo -f example/wekan/docker-compose.yaml up -d
 docker-compose -c whabo exec routing-table redis-cli set wekan "wekan:8080"
 ```
+
+### Let's chat
+
+```bash
+docker-compose -c whabo -f example/lets-chat/docker-compose.yaml up -d
+docker-compose -c whabo exec routing-table redis-cli set lets-chat "lets-chat:8080"
+```
+
+### Codimd
+
+```bash
+docker-compose -c whabo -f example/codimd/docker-compose.yaml up -d
+docker-compose -c whabo exec routing-table redis-cli set codimd "codimd:3000"
+```

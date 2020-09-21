@@ -1,0 +1,31 @@
+version: '3.5'
+services:
+  database:
+    image: postgres:9.6-alpine
+    environment:
+      - POSTGRES_USER=hackmd
+      - POSTGRES_PASSWORD=hackmdpass
+      - POSTGRES_DB=hackmd
+    volumes:
+      - database:/var/lib/postgresql/data
+    networks:
+      - backend
+    restart: always
+  codimd:
+    image: quay.io/codimd/server:1.6.0
+    environment:
+      - CMD_DB_URL=postgres://hackmd:hackmdpass@database:5432/hackmd
+    # ports:
+    #   - "3000:3000"
+    networks:
+      - backend
+      - reverse-proxy-net
+    restart: always
+    depends_on:
+      - database
+networks:
+  backend:
+  reverse-proxy-net:
+    external: true
+volumes:
+  database:
