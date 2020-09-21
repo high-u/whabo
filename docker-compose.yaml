@@ -1,0 +1,58 @@
+version: "3.5"
+services:
+  reverse-proxy:
+    build:
+      context: .
+      args:
+        - DOMAIN=${DOMAIN}
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - whabo-certs:/etc/nginx/certs
+    env_file:
+      - ./.env
+    networks:
+      - reverse-proxy-net
+  routing-table:
+    image: redis:6.0-alpine
+    restart: always
+    volumes:
+      - whabo-redis:/data
+    command: redis-server --appendonly yes
+    networks:
+      - reverse-proxy-net
+  lego-get-certs:
+    image: goacme/lego:latest
+    volumes:
+      - whabo-certs:/.lego
+    env_file:
+      - ./.env
+    entrypoint: |
+      sh -c '
+      lego --accept-tos --email $${EMAIL} --dns $${DNS} --domains $${DOMAIN} --domains $${SUBDOMAIN} run
+      '
+  lego-update-certs:
+    image: goacme/lego:latest
+    restart: always
+    volumes:
+      - whabo-certs:/.lego
+    env_file:
+      - ./.env
+    entrypoint: |
+      sh -c '
+      echo "lego --email $${EMAIL} --dns $${DNS} --domains $${DOMAIN} --domains $${SUBDOMAIN} --days $${DAYS} renew" > /renew.sh
+      echo "wget --spider http://reverse-proxy/reload" >> /renew.sh
+      chmod +x /renew.sh
+      mkdir -p /var/spool/cron/crontabs
+      echo "0 0 * * 0 /renew.sh" > /var/spool/cron/crontabs/root
+      crond -f -d 8
+      '
+networks:
+  reverse-proxy-net:
+    external: true
+volumes:
+  whabo-certs:
+    external: true
+  whabo-redis:
