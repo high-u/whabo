@@ -214,3 +214,17 @@ docker-compose -c whabo exec routing-table redis-cli get hello
 # Replace `example.com`
 curl -L https://hello.example.com
 ```
+
+### Wordpress
+
+```bash
+docker-compose -c whabo -f example/wordpress/docker-compose.yaml up -d
+docker-compose -c whabo exec routing-table redis-cli set wordpress "wordpress:80"
+```
+
+### Wekan
+
+```bash
+docker-compose -c whabo -f example/wekan/docker-compose.yaml up -d
+docker-compose -c whabo exec routing-table redis-cli set wekan "wekan:8080"
+```

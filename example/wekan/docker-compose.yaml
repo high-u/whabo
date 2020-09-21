@@ -1,0 +1,26 @@
+version: "3.5"
+services:
+  wekan:
+    image: wekanteam/wekan
+    environment:
+      - MONGO_URL=mongodb://wekandb/wekan
+      - ROOT_URL=https://wekan.looocus.run/
+    # ports:
+    #   - "8080"
+    restart: always
+    networks:
+      - wekan-net
+      - reverse-proxy-net
+  wekandb:
+    image: mongo
+    volumes:
+      - db-data:/data/db
+    restart: always
+    networks:
+      - wekan-net
+volumes:
+    db-data:
+networks:
+  wekan-net:
+  reverse-proxy-net:
+    external: true
