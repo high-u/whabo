@@ -1,0 +1,49 @@
+version: '3.5'
+services:
+  gitea:
+    image: gitea/gitea:1.12.4
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - DB_TYPE=mysql
+      - DB_HOST=gitea:3306
+      - DB_NAME=gitea
+      - DB_USER=gitea
+      - DB_PASSWD=changeme
+    volumes:
+      - ./data:/data
+    # ports:
+    #   - "3000:3000"
+    #   - "22:22"
+    networks:
+      - gitea-net
+      - reverse-proxy-net
+    depends_on:
+      - db
+    restart: always
+  db:
+    image: mariadb:10
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=changeme
+      - MYSQL_DATABASE=gitea
+      - MYSQL_USER=gitea
+      - MYSQL_PASSWORD=changeme
+    volumes:
+      - db-data:/var/lib/mysql
+    networks:
+      - gitea-net
+  redis-cli:
+    image: redis:6.0-alpine
+    environment:
+      - SUBDOMAIN=gitea
+      - ROUTING_ADDRESS=gitea:3000
+    command: redis-cli -h routing-table -p 6379 set $${SUBDOMAIN} $${ROUTING_ADDRESS}
+    networks:
+      - reverse-proxy-net
+volumes:
+  db-data:
+networks:
+  gitea-net:
+  reverse-proxy-net:
+    external: true

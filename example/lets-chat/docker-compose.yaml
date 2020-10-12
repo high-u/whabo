@@ -11,6 +11,14 @@ services:
     image: mongo:latest
     networks:
       - lets-chat-net
+  redis-cli:
+    image: redis:6.0-alpine
+    environment:
+      - SUBDOMAIN=lets-chat
+      - ROUTING_ADDRESS=lets-chat:8080
+    command: redis-cli -h routing-table -p 6379 set $${SUBDOMAIN} $${ROUTING_ADDRESS}
+    networks:
+      - reverse-proxy-net
 networks:
   lets-chat-net:
   reverse-proxy-net:

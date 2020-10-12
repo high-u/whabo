@@ -20,7 +20,9 @@ services:
     restart: always
     volumes:
       - whabo-redis:/data
-    command: redis-server --appendonly yes
+    command: sh -c '
+      echo "bind 0.0.0.0" > /redis.conf &&
+      redis-server /redis.conf --appendonly yes'
     networks:
       - reverse-proxy-net
   lego-get-certs:
@@ -31,7 +33,13 @@ services:
       - ./.env
     entrypoint: |
       sh -c '
-      lego --accept-tos --email $${EMAIL} --dns $${DNS} --domains $${DOMAIN} --domains $${SUBDOMAIN} run
+      lego \
+      --accept-tos \
+      --email $${EMAIL} \
+      --dns $${DNS} \
+      --domains $${DOMAIN} \
+      --domains $${SUBDOMAIN} \
+      run
       '
   lego-update-certs:
     image: goacme/lego:latest
@@ -42,7 +50,13 @@ services:
       - ./.env
     entrypoint: |
       sh -c '
-      echo "lego --email $${EMAIL} --dns $${DNS} --domains $${DOMAIN} --domains $${SUBDOMAIN} --days $${DAYS} renew" > /renew.sh
+      echo "lego \
+      --email $${EMAIL} \
+      --dns $${DNS} \
+      --domains $${DOMAIN} \
+      --domains $${SUBDOMAIN} \
+      --days $${DAYS} \
+      renew" > /renew.sh
       echo "wget --spider http://reverse-proxy/reload" >> /renew.sh
       chmod +x /renew.sh
       mkdir -p /var/spool/cron/crontabs

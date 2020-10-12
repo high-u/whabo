@@ -184,9 +184,9 @@ docker-compose -c whabo up -d lego-update-certs
 #### Run reverse proxy
 
 ```bash
-# Run OpenResty
-docker-compose -c whabo up -d routing-table
 # Run Redis
+docker-compose -c whabo up -d routing-table
+# Run OpenResty
 docker-compose -c whabo up -d --build reverse-proxy
 ```
 
@@ -241,4 +241,13 @@ docker-compose -c whabo exec routing-table redis-cli set lets-chat "lets-chat:80
 ```bash
 docker-compose -c whabo -f example/codimd/docker-compose.yaml up -d
 docker-compose -c whabo exec routing-table redis-cli set codimd "codimd:3000"
+```
+
+### Gitea
+
+- Problem
+
+```bash
+docker-compose -c whabo -f example/gitea/docker-compose.yaml up -d
+docker-compose -c whabo exec routing-table redis-cli set gitea "gitea:3000"
 ```
