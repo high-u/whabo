@@ -36,7 +36,7 @@ services:
   redis-cli:
     image: redis:6.0-alpine
     environment:
-      - SUBDOMAIN=gitea
+      - SUBDOMAIN=git
       - ROUTING_ADDRESS=gitea:3000
     command: sh -c 'redis-cli -h routing-table -p 6379 set $${SUBDOMAIN} $${ROUTING_ADDRESS}'
     networks:
