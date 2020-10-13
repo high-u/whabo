@@ -12,7 +12,7 @@ services:
     environment:
       - SUBDOMAIN=http-echo
       - ROUTING_ADDRESS=http-echo:5678
-    command: redis-cli -h routing-table -p 6379 set $${SUBDOMAIN} $${ROUTING_ADDRESS}
+    command: sh -c 'redis-cli -h routing-table -p 6379 set $${SUBDOMAIN} $${ROUTING_ADDRESS}'
     networks:
       - reverse-proxy-net
 networks:

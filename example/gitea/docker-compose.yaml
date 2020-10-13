@@ -38,7 +38,7 @@ services:
     environment:
       - SUBDOMAIN=gitea
       - ROUTING_ADDRESS=gitea:3000
-    command: redis-cli -h routing-table -p 6379 set $${SUBDOMAIN} $${ROUTING_ADDRESS}
+    command: sh -c 'redis-cli -h routing-table -p 6379 set $${SUBDOMAIN} $${ROUTING_ADDRESS}'
     networks:
       - reverse-proxy-net
 volumes:
